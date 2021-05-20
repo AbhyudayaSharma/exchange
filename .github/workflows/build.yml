@@ -1,0 +1,23 @@
+name: build
+
+on:
+  - push
+
+jobs:
+  build:
+    name: Build and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Compile and install
+        run: |
+          sudo make install
+      - name: Test
+        run: |
+          set -e
+          mkdir dir1 dir2
+          echo 1 > dir1/file.txt
+          echo 2 > dir2/file.txt
+          exchange dir1 dir2
+          grep -cF 2 dir1/file.txt
+          grep -cF 1 dir2/file.txt
