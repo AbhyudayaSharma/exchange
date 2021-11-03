@@ -2,10 +2,14 @@
 
 #include <fcntl.h>
 #include <getopt.h>
+#include <gnu/libc-version.h>
+#include <linux/fs.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <sys/syscall.h>
+#include <unistd.h>
 
 static struct option long_options[] = {
     {"help",    no_argument, NULL, 'h'},
@@ -28,6 +32,7 @@ int main(int argc, char **argv) {
     int c;
     bool verbose = false;
     char **paths;
+    int ret;
 
     while ((c = getopt_long(argc, argv, "hv", long_options, NULL)) != -1) {
         switch (c) {
@@ -54,14 +59,18 @@ int main(int argc, char **argv) {
 
     // Atomically exchange the two paths. If paths are not absolute, consider
     // them relative to the current working directory
-    if (renameat2(AT_FDCWD, paths[0], AT_FDCWD, paths[1], RENAME_EXCHANGE) == -1) {
+#if (__GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 28))
+        ret = renameat2(AT_FDCWD, paths[0], AT_FDCWD, paths[1], RENAME_EXCHANGE);
+#else
+        ret = syscall(SYS_renameat2, AT_FDCWD, paths[0], AT_FDCWD, paths[1], RENAME_EXCHANGE);
+#endif
+
+    if (ret == -1) {
         perror("exchange: could not exchange the two paths");
-        return 1;
+        exit(1);
     }
 
     if (verbose) {
         puts("Paths exchanged successfully");
     }
-
-    return 0;
 }
