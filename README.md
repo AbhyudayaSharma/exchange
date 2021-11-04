@@ -26,6 +26,6 @@ exchange: atomically exchange names and contents of two files or directories
 Usage: exchange [OPTIONS] PATH1 PATH2
 
 Options:
-        --help     show help text and exit
-        --verbose  produces verbose output
+        -h, --help     show help text and exit
+        -v, --verbose  produces verbose output
 ```

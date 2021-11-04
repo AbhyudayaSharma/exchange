@@ -20,7 +20,7 @@ static struct option long_options[] = {
 void usage(int exit_code) {
     puts("Usage: exchange [-v] PATH1 PATH2\n"
          "  or:  exchange -h|--help\n"
-         "atomically exchange names and contents of two files or directories\n"
+         "atomically exchange names of two files or directories\n"
          "\n"
          "Options:\n"
          "  -h, --help      shows help text\n"
@@ -37,18 +37,18 @@ int main(int argc, char **argv) {
     while ((c = getopt_long(argc, argv, "hv", long_options, NULL)) != -1) {
         switch (c) {
             case 'h':
-                usage(0);
+                usage(EXIT_SUCCESS);
             case 'v':
                 verbose = true;
                 break;
             default:
-                usage(1);
+                usage(EXIT_FAILURE);
         }
     }
 
     if (argc - optind != 2) {
         puts("Exactly two paths are required.\n");
-        usage(1);
+        usage(EXIT_FAILURE);
     }
 
     paths = argv + optind;
@@ -67,10 +67,12 @@ int main(int argc, char **argv) {
 
     if (ret == -1) {
         perror("exchange: could not exchange the two paths");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     if (verbose) {
         puts("Paths exchanged successfully");
     }
+
+    return EXIT_SUCCESS;
 }
