@@ -22,9 +22,10 @@ make install
 ## Usage
 
 ```text
-exchange: exchange names of two files or directories atomically
-Usage: exchange FILE1 FILE2 [flags...]
-Allowed flags:
-        --help:    shows this help text
-        --verbose: produces verbose output
+exchange: atomically exchange names and contents of two files or directories
+Usage: exchange [OPTIONS] PATH1 PATH2
+
+Options:
+        -h, --help     show help text and exit
+        -v, --verbose  produces verbose output
 ```
